@@ -1,127 +1,121 @@
+# OpenAPI spec for ClickHouse Cloud
 
-# Getting Started with OpenAPI spec for ClickHouse Cloud
+[![Built with APIMatic][apimatic-badge]][apimatic-url] [![License: MIT][license-badge]][license-url]
 
-## Install the Package
+The OpenAPI spec for ClickHouse Cloud SDK for .NET provides access to the OpenAPI spec for ClickHouse Cloud REST APIs from .NET applications.
 
-If you are building with .NET CLI tools then you can also use the following command:
+> [!TIP]
+> **Looking for a specific signature, model, enum, or error type?** This SDK ships a generated,
+> machine-readable **[SDK map](sdk-map.md)** — a lookup index of the SDK's entire C# surface. Consult it
+> **before** grepping or scanning the source tree; it answers most contract questions directly and,
+> when a source file is genuinely needed, names the exact one to open. Details under [SDK map](#sdk-map).
+
+---
+
+## Installation
+
+Add the .NET SDK to your project from NuGet:
 
 ```bash
-dotnet add package ChApimaticSDK --version 0.0.1
+dotnet add package ChApimaticSDK
 ```
 
-You can also view the package at:
-https://www.nuget.org/packages/ChApimaticSDK/0.0.1
+---
 
-## Initialize the API Client
+## Quick Start
 
-**_Note:_** Documentation for the client can be found [here.](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/client.md)
+### Dependency Injection
 
-The following parameters are configurable for the API Client:
-
-| Parameter | Type | Description |
-|  --- | --- | --- |
-| Timeout | `TimeSpan` | Http client timeout.<br>*Default*: `TimeSpan.FromSeconds(30)` |
-| HttpClientConfiguration | [`Action<HttpClientConfiguration.Builder>`](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-client-configuration-builder.md) | Action delegate that configures the HTTP client by using the HttpClientConfiguration.Builder for customizing API call settings.<br>*Default*: `new HttpClient()` |
-| LogBuilder | [`LogBuilder`](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/log-builder.md) | Represents the logging configuration builder for API calls |
-| BasicAuthCredentials | [`BasicAuthCredentials`](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/auth/basic-authentication.md) | The Credentials Setter for Basic Authentication |
-
-The API client can be initialized as follows:
-
-### Code-Based Initialization
+Register the client with `IServiceCollection` and resolve it from the container. The `HttpClient` is managed by `IHttpClientFactory`. Configure the client's behavior through [OpenApiSpecForClickHouseCloudClientOptions](OpenApiSpecForClickHouseCloudClientOptions.cs).
 
 ```csharp
-using Microsoft.Extensions.Logging;
-using OpenApiSpecForClickHouseCloud.Standard;
-using OpenApiSpecForClickHouseCloud.Standard.Authentication;
-
-namespace ConsoleApp;
-
-OpenApiSpecForClickHouseCloudClient client = new OpenApiSpecForClickHouseCloudClient.Builder()
-    .BasicAuthCredentials(
-        new BasicAuthModel.Builder(
-            "BasicAuthUserName",
-            "BasicAuthPassword"
-        )
-        .Build())
-    .HttpClientConfig(httpClientConfig =>
-        httpClientConfig.Timeout(TimeSpan.FromSeconds(100)))
-    .LoggingConfig(config => config
-        .LogLevel(LogLevel.Information)
-        .RequestConfig(reqConfig => reqConfig.Body(true))
-        .ResponseConfig(respConfig => respConfig.Headers(true))
-    )
-    .Build();
+services.AddOpenApiSpecForClickHouseCloudClient(options =>
+    {
+        options.BasicAuth =
+            new BasicAuthCredentials
+            {
+                Username = "YOUR_USERNAME",
+                Password = "YOUR_PASSWORD",
+            };
+        options.Environment = ServerEnvironment.Production;
+        // TODO: configure more client options here
+    });
 ```
 
-### Configuration-Based Initialization
+### Direct Instantiation
+
+Create the client by passing an `HttpClient` you manage yourself. Configure the client's behavior through [OpenApiSpecForClickHouseCloudClientOptions](OpenApiSpecForClickHouseCloudClientOptions.cs).
 
 ```csharp
-using OpenApiSpecForClickHouseCloud.Standard;
-using Microsoft.Extensions.Configuration;
-
-namespace ConsoleApp;
-
-// Build the IConfiguration using .NET conventions (JSON, environment, etc.)
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("config.json")
-    .AddEnvironmentVariables() // [optional] read environment variables
-    .Build();
-
-// Instantiate your SDK and configure it from IConfiguration
-var client = OpenApiSpecForClickHouseCloudClient
-    .FromConfiguration(configuration.GetSection("OpenApiSpecForClickHouseCloud"));
+var httpClient = new HttpClient();
+// TODO: configure more client options here
+var options =
+    new OpenApiSpecForClickHouseCloudClientOptions
+    {
+        BasicAuth = new BasicAuthCredentials
+        {
+            Username = "YOUR_USERNAME",
+            Password = "YOUR_PASSWORD",
+        },
+        Environment = ServerEnvironment.Production,
+    };
+var client = new OpenApiSpecForClickHouseCloudClient(httpClient, options);
 ```
 
-See the [Configuration-Based Initialization](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/configuration-based-initialization.md) section for details.
+---
 
-## Authorization
+## Usage
 
-This API uses the following authentication schemes.
+For code examples and error responses, see [API Reference](api-reference.md).
 
-* [`basicAuth (Basic Authentication)`](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/auth/basic-authentication.md)
+## SDK map
 
-## List of APIs
+This SDK ships a generated **SDK map** — [`sdk-map.md`](sdk-map.md) plus the [`map/`](map/) pages — a deterministic, lookup-oriented table of contents of the SDK's C# surface, generated by APIMatic alongside this SDK.
 
-* [Usermanagement](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/usermanagement.md)
-* [Role Management](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/role-management.md)
-* [AP Ikeys](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/ap-ikeys.md)
-* [Query AP Iendpoints](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/query-ap-iendpoints.md)
-* [Organization](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/organization.md)
-* [Billing](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/billing.md)
-* [Service](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/service.md)
-* [Backup](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/backup.md)
-* [Snapshot](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/snapshot.md)
-* [Prometheus](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/prometheus.md)
-* [Click Pipes](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/click-pipes.md)
-* [Click Stack](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/click-stack.md)
-* [Postgres](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/postgres.md)
-* [UDF](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/controllers/udf.md)
+**Read it before scanning the source.** Whether you are an AI coding assistant or searching by hand, the map answers "what is the exact …" by lookup for every call-level contract, and for anything it does not carry it names the one file that does — so you never have to search the source tree:
 
-## SDK Infrastructure
+- **[`sdk-map.md`](sdk-map.md)** — the index: client construction, servers/auth, the options/retry reference, the SDK-wide defaults the operation rows rely on, and link tables into [`map/`](map/).
+- **[`map/operations/`](map/operations/)** — one page per controller: the exact C# signature, the return type, the error type with its typed `TryGet…` accessors, and pagination — plus, per operation, a **Type sources** table naming the file that declares every type that operation mentions.
 
-### Configuration
+Model shapes — record fields with their JSON wire names, enum member names and wire values, `OneOf`/`AnyOf` union variants — are **not** duplicated in the map. Take the path from the operation's Type sources table and read the declaring file; it is the single source of truth and cannot go stale against the code.
 
-* [Configuration-Based Initialization](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/configuration-based-initialization.md)
-* [HttpClientConfiguration](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-client-configuration.md)
-* [HttpClientConfigurationBuilder](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-client-configuration-builder.md)
-* [LogBuilder](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/log-builder.md)
-* [LogRequestBuilder](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/log-request-builder.md)
-* [LogResponseBuilder](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/log-response-builder.md)
-* [ProxyConfigurationBuilder](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/proxy-configuration-builder.md)
+**Each operation row states what is specific to that operation.** The SDK-wide defaults are stated once in [`sdk-map.md`](sdk-map.md) — throw-only (no `Result`-style no-throw variants), no pagination, the four fixed `RawError` accessors, the `Default` server group — and a row appears only where its operation departs from one. A row silent on pagination is telling you that operation has none.
 
-### HTTP
+The **HTTP verb and route**, and the endpoint's **behavioural prose**, live on the operation itself, in the source file named at the top of its operations page. Read them there when something needs them — wiring a mock, reading a provider log, or settling a rule about what you must pass.
 
-* [HttpCallback](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-callback.md)
-* [HttpContext](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-context.md)
-* [HttpRequest](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-request.md)
-* [HttpResponse](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-response.md)
-* [HttpStringResponse](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/http-string-response.md)
+**Workflow:** look the fact up in the map → where the map leaves something ambiguous, open the **one** source file the row names → the compiler is the backstop (a name that isn't in the map won't build). Don't scan or grep the tree to find things — the map is the locator.
 
-### Utilities
+### Which one to reach for
 
-* [ApiException](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/api-exception.md)
-* [ApiResponse](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/api-response.md)
-* [ApiHelper](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/api-helper.md)
-* [CustomDateTimeConverter](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/custom-date-time-converter.md)
-* [UnixDateTimeConverter](https://www.github.com/sdks-io/ch-apimatic-dotnet-sdk/tree/0.0.1/doc/unix-date-time-converter.md)
+The map and the [API Reference](api-reference.md) answer different questions, and the map is generated from this SDK's source so it stays in lockstep with the code it describes.
 
+| Use | For |
+| --- | --- |
+| **[`sdk-map.md`](sdk-map.md) + [`map/`](map/)** | Traversing the SDK and working out its surface — locating the operation you need (this SDK exposes **157 operations**), its exact signature and parameter order, the shape and JSON wire names of the models it takes and returns, which error type it throws and how to read it, and the source file behind any of it. This is the index to consume the SDK from, and the one to reach for first. |
+| **[`api-reference.md`](api-reference.md)** | Usage guidance for a single operation once you know which one you want — a runnable code sample, per-parameter descriptions, and the error responses it can return. |
+
+## Best Practices
+
+> [!TIP]
+> Use a **single `OpenApiSpecForClickHouseCloudClient` instance** for the lifetime of your application and
+> reuse it across all requests. Creating a new instance per request might exhaust the
+> connection pool.
+
+## License
+
+This SDK is distributed under the [MIT License](LICENSE).
+
+---
+
+## Support
+
+Refer to the [API reference](api-reference.md) for detailed information on available operations with code samples.
+
+For further assistance, please contact support at support@clickhouse.com.
+
+---
+
+[license-url]: LICENSE
+[license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
+[apimatic-url]: https://www.apimatic.io
+[apimatic-badge]: https://www.apimatic.io/hubfs/Built-with-APIMatic-badge.svg

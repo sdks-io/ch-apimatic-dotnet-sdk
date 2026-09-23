@@ -1,0 +1,22 @@
+using System;
+using System.Text.Json.Serialization;
+
+namespace OpenApiSpecForClickHouseCloud.Models;
+
+public record V1OrganizationsUdfUploadsUrlResponse
+{
+    /// <summary>
+    /// HTTP status code.
+    /// </summary>
+    [JsonPropertyName("status")]
+    public required int Status { get; init; }
+
+    /// <summary>
+    /// Unique id assigned to every request. UUIDv4
+    /// </summary>
+    [JsonPropertyName("requestId")]
+    public required Guid RequestId { get; init; }
+
+    [JsonPropertyName("result")]
+    public required UdfUploadSession Result { get; init; }
+}
